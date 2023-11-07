@@ -5,6 +5,7 @@
 // @description  在网页版推特中只查看原创内容
 // @author       sodakoo
 // @match        https://twitter.com/*
+// @license      GPL-3.0-only
 // @grant        none
 // ==/UserScript==
 
