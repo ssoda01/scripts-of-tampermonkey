@@ -11,8 +11,16 @@
 
 (function () {
     'use strict';
-    let style = document.createElement('style');
-    style.innerHTML = `
+    let stylePC = document.createElement('style');
+    let styleMobile = document.createElement('style');
+    let isMobile = false;
+    if (window.screen.width <= 768) {
+        isMobile = true
+    }
+    else {
+        isMobile = false
+    }
+    stylePC.innerHTML = `
         .yellow-btn-common {
             position: fixed;
             top: 10px;
@@ -46,16 +54,49 @@
             border-color: #000;
         }
     `;
+    styleMobile.innerHTML = `
+        .yellow-btn-common {
+            opacity: .3;
+            position: fixed;
+            bottom: 42px;
+            right: 16px;
+            z-index: 9999;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 5px 5px #eff3f4;
+            width: 48px;
+            border: 2px solid;
+            transition: .3s;
+        }
 
+        .yellow-btn-common:hover {
+            background: rgba(0,0,0,0.45);
+            color: #fff;
+        }
+        .yellow-btn-common:active {
+            background: #000;
+            color: #fff;
+        }
+
+        .yellow-btn-off {
+            color: #c3c3c3;
+            border-color: #c3c3c3;
+        }
+        .yellow-btn-on {
+            color: #000;
+            border-color: #000;
+        }
+    `;
     // 将样式节点添加到文档头部
-    document.head.appendChild(style);
+
+    document.head.appendChild(isMobile ? styleMobile : stylePC);
 
     // 开关状态 0已关闭 1已开启
     let status = 0;
     let observer = undefined;
     let getBtnText = (status) => {
-        if (status === 0) { return '只看原创内容 OFF' }
-        else { return '只看原创内容 ON' }
+        if (status === 0) { return isMobile ? 'OFF' : '只看原创内容 OFF' }
+        else { return isMobile ? 'ON' : '只看原创内容 ON' }
     }
     // 监听页面加载完成事件
     // 创建悬浮按钮
@@ -114,16 +155,17 @@
     button.addEventListener('click', function () {
         status = status === 0 ? 1 : 0
         button.textContent = getBtnText(status);
-        if(status === 0 ){
+        if (status === 0) {
             button.classList.remove('yellow-btn-on');
             button.classList.add('yellow-btn-off');
-            if (observer){
+            if (observer) {
                 observer.disconnect();
             }
-        }else{
+        } else {
             button.classList.remove('yellow-btn-off');
             button.classList.add('yellow-btn-on');
-            hideNonOriginalTweets();}
+            hideNonOriginalTweets();
+        }
 
     });
 })();
