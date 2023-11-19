@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         推特只看原创内容
 // @namespace    https://github.com/ssoda01
-// @version      1.0
+// @version      1.1
 // @description  在网页版推特中只查看原创内容
 // @author       sodakoo
 // @match        https://twitter.com/*
