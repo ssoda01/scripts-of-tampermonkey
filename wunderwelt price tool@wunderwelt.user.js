@@ -57,9 +57,7 @@
 `
     // Current Japanese Yen to Chinese Yuan Exchange Rate
     let rateJPY2CNY = 0;
-
-    console.log("🍎")
-
+    
     var style = document.createElement('style');
     style.innerHTML = stylePriceSpanPrice;
     document.head.appendChild(style);
@@ -114,7 +112,6 @@
         return formattedMoney
     }
     const addCNYSpan = (priceDomList) => {
-        console.log("rateJPY2CNY", rateJPY2CNY)
         if (isNaN(rateJPY2CNY) || rateJPY2CNY == 0) {
             alert('还没有输入汇率哦')
             return
