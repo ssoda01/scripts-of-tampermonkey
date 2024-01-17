@@ -2,7 +2,7 @@
 // @name         Boss直聘批量屏蔽外包
 // @namespace    https://github.com/ssoda01
 // @version      1.0
-// @description  Boss直聘批量屏蔽外包
+// @description  Boss直聘批量屏蔽,Boss直聘批量屏蔽外包
 // @author       sodakoo
 // @match        https://www.zhipin.com/web/geek/privacy-set?*
 // @license      GPL-3.0-only
