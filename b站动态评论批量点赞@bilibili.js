@@ -6,6 +6,7 @@
 // @author       sodakoo
 // @match        https://www.bilibili.com/opus/*
 // @match        https://t.bilibili.com/*
+// @license      GPL-3.0-only
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bilibili.com
 // @grant        none
 // ==/UserScript==
