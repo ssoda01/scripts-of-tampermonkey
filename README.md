@@ -8,6 +8,9 @@
 #### v1.1
 2023-11-19
 - 新增移动端适配 #1 感谢@windy1021
+#### v1.2
+2024-05-17
+- 修复只匹配twitter.com开头url，未匹配x.com开头url的问题 #6 感谢@Jayesslee1 
 
 ## wunderwelt price tool
 
