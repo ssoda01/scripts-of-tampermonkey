@@ -1575,7 +1575,8 @@
     let autoGetTokenBtn = document.createElement('button');
     autoGetTokenBtn.innerText = '自动获取Token';
     function autoGetToken() {
-        zpTokenInput.value = window.cookie.get('geek_zp_token')
+        //修正zp_token获取
+        zpTokenInput.value = window.cookie.get('bst')
         tokenInput.value = document.querySelector("#wrap > div:nth-child(1) > div > script").textContent.split('\n').find(e => e.includes('token:')).trim().replace('token: "', '').replace(`",`, '')
         token = tokenInput.value;
         zp_token = zpTokenInput.value;
