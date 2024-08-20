@@ -32,6 +32,11 @@
 从网上搜了一下[常见外包公司汇总](https://blog.csdn.net/qq_43073558/article/details/120855582)，拿到调用搜索接口拿到它们的encryptComId。
 跑完脚本之后，会手动屏蔽23家公司。（然后boss会自动帮你追加屏蔽786家公司，显示在它的智能屏蔽的模块里。*2024年01月17日时候是这个数，随着时间的推移不一定是786。反正它会自动帮你屏蔽一系列关联公司就是了。*）
 
+### Release Note
+#### v1.1
+2024-08-20
+- update zp_token retrieval 超级无敌感谢@3kaiu ❤️‍🔥
+
 ### 使用方法
 1. 打开网页[boss直聘-(右上角头像菜单)-隐私保护](https://www.zhipin.com/web/geek/privacy-set?)
 2. 点击【自动获取Token】
