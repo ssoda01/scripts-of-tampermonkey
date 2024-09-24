@@ -4,7 +4,7 @@
 // @version      1.2
 // @description  Boss直聘批量屏蔽,Boss直聘批量屏蔽外包
 // @author       sodakoo
-// @match        https://www.zhipin.com/web/geek/privacy-set?*
+// @match        https://www.zhipin.com/web/geek/privacy-set*
 // @license      GPL-3.0-only
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=zhipin.com
 // @grant        none
