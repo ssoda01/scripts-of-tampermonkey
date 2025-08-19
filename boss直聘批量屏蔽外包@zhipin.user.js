@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Boss直聘批量屏蔽外包
 // @namespace    https://github.com/ssoda01
-// @version      1.3
+// @version      1.4
 // @description  Boss直聘批量屏蔽,Boss直聘批量屏蔽外包
 // @author       sodakoo
 // @match        https://www.zhipin.com/web/geek/privacy-set*
+// @match        *://*.zhipin.com/web/geek/privacy-set*
 // @license      GPL-3.0-only
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=zhipin.com
 // @grant        none
@@ -1535,7 +1536,7 @@
             display: flex;
             flex-direction: column;
             border: 2px solid #00bebd;
-            background: rgba(0,190,189,.1);
+            background: rgba(228,255,255,.9);
             padding: 16px;
             border-radius: 8px;
             gap: 8px;
@@ -1547,6 +1548,7 @@
             height: 300px;
             word-break: break-all;
             overflow: auto;
+            z-index:999;
         }
         `;
     document.head.appendChild(toolPanelStyle);
