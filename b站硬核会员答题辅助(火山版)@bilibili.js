@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         b站硬核会员答题辅助(火山方舟ver.)
 // @namespace    https://github.com/ssoda01
-// @version      2025-09-08
-// @description  b站硬核会员答题辅助 火山方舟ver. 可以自己选择其他模型
+// @version      2025-09-09
+// @description  可能是最轻量级的 b站硬核会员 答题辅助 可以自己选择其他模型（自己在火山方舟里选）
 // @author       sodakoo
 // @match        https://www.bilibili.com/h5/senior-newbie/qa
 // @license      GPL-3.0-only
