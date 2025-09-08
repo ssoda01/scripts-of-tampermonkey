@@ -2,7 +2,7 @@
 // @name         b站硬核会员答题辅助(火山方舟ver.)
 // @namespace    https://github.com/ssoda01
 // @version      2025-09-08
-// @description  b站硬核会员答题辅助(火山方舟ver.)
+// @description  b站硬核会员答题辅助 火山方舟ver. 可以自己选择其他模型
 // @author       sodakoo
 // @match        https://www.bilibili.com/h5/senior-newbie/qa
 // @license      GPL-3.0-only
