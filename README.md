@@ -153,3 +153,31 @@ b 站动态评论批量点赞。 解放双手，守护睡眠。
 ### 联系我
 
 [github](https://github.com/ssoda01/scripts-of-tampermonkey)
+
+## b站硬核会员答题辅助(火山方舟ver.)
+#### v1.0
+
+2025-09-09
+
+B站硬核答题辅助，使用火山方舟的AI CHAT API
+
+
+感谢项目💖 [HCLonely/bili-senior-newbie-qa](https://github.com/HCLonely/bili-senior-newbie-qa)
+
+1. 在浏览器中打开[https://www.bilibili.com/h5/senior-newbie](https://www.bilibili.com/h5/senior-newbie/)的方式请参考[HCLonely/bili-senior-newbie-qa](https://github.com/HCLonely/bili-senior-newbie-qa)的项目。
+
+2. 使用火山方舟，可以自由接入你想要的模型。在[这里查看你的key，并选择模型](https://api.volcengine.com/api-explorer?action=ChatCompletions)。
+
+3. 火山方舟可以只充值5元，DeepSeek必须10元起充，选择火山方舟=选择了灵活。（而且白嫖额度很多，目前本人还是充值5.0，消费0.0，余额5.0）
+
+4. 火山方舟可以送点钱给我吗
+
+### 使用说明
+
+- 进入页面之后，如果没出现提示输入【请输入你的火山CHAT API Key:】，就再刷新下（直到出现这个KEY的输入框）
+
+- 写的比较粗糙，有需要自己加工，欢迎pr
+
+### 联系我
+
+[github](https://github.com/ssoda01/scripts-of-tampermonkey)
