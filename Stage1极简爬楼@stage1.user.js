@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Stage1极简爬楼
 // @namespace    https://stage1st.com/
-// @version      0.1.0
+// @version      1.0
 // @author       sodakoo
 // @description  为 Stage1st 帖子页提供样式定制：极简模式，改色，缩略图。
 // @match        https://stage1st.com/2b/thread-*.html
