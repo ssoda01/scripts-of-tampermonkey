@@ -5,6 +5,7 @@
 // @description  为 Stage1st 帖子页提供样式定制：极简模式，改色，缩略图。
 // @match        https://stage1st.com/2b/thread-*.html
 // @match        https://stage1st.com/2b/forum.php?mod=viewthread*
+// @license      GPL-3.0-only
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_addStyle

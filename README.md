@@ -183,6 +183,9 @@ B站硬核答题辅助，使用火山方舟的AI CHAT API
 [github](https://github.com/ssoda01/scripts-of-tampermonkey)
 
 ## Stage1极简爬楼
+
+[greasyfork](https://greasyfork.org/zh-CN/scripts/561928-stage1%E6%9E%81%E7%AE%80%E7%88%AC%E6%A5%BC)
+
 #### v1.0
 
 2026-01-09
