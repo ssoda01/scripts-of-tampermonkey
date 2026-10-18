@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站动态评论批量点赞
 // @namespace    https://github.com/ssoda01
-// @version      2.1.0
+// @version      2.1.1
 // @description  Bilibili dynamic comments batch likes(2.0 full automatic)
 // @author       sodakoo
 // @match        https://www.bilibili.com/opus/*
@@ -14,16 +14,20 @@
 (function () {
     'use strict';
 
-    // —— 频率配置（毫秒）——
-    // LIKE_INTERVAL：每条点赞/取消赞的间隔，越大越慢、越不容易触发风控
-    // LOAD_INTERVAL：加载全部评论时，每次滚到底的等待
-    const LIKE_INTERVAL = 3000
+    // LOAD_INTERVAL：加载全部评论时，每次滚到底的等待（毫秒）
+    // 点赞间隔由面板滑块控制（秒），默认 3s
     const LOAD_INTERVAL = 800
+    let likeIntervalSec = 3
 
     let loadAllBtn = null;
     let autoBtn = null;
+    let likeIntervalValueEl = null;
     let isLoadingAll = false;
     let isAutoRunning = false;
+
+    function getLikeIntervalMs() {
+        return likeIntervalSec * 1000
+    }
 
     if (window.location.href.match(/^https:\/\/t\.bilibili\.com\/\d+\??.*$/) || window.location.href.match(/^https:\/\/www\.bilibili\.com\/opus\/\d+\??.*$/)) {
         const styleBatchLikes = `
@@ -85,6 +89,27 @@
         color: #00AEEC;
         background: #00aeec0f;
     }
+    .batch-like-slider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 2px 2px;
+    }
+    .batch-like-slider input[type="range"] {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        accent-color: #00AEEC;
+        cursor: pointer;
+    }
+    .batch-like-slider-value {
+        flex: none;
+        min-width: 28px;
+        text-align: right;
+        font-size: 12px;
+        color: #6b7078;
+        font-variant-numeric: tabular-nums;
+    }
 `
         var style = document.createElement('style');
         style.innerHTML = styleBatchLikes;
@@ -100,6 +125,25 @@
 
         const secondaryGroup = document.createElement('div');
         secondaryGroup.className = 'batch-like-secondary-group';
+
+        const sliderRow = document.createElement('div');
+        sliderRow.className = 'batch-like-slider';
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = '3';
+        slider.max = '20';
+        slider.step = '1';
+        slider.value = String(likeIntervalSec);
+        likeIntervalValueEl = document.createElement('span');
+        likeIntervalValueEl.className = 'batch-like-slider-value';
+        likeIntervalValueEl.textContent = `${likeIntervalSec}s`;
+        slider.addEventListener('input', function () {
+            likeIntervalSec = Number(slider.value) || 3;
+            likeIntervalValueEl.textContent = `${likeIntervalSec}s`;
+        });
+        sliderRow.appendChild(slider);
+        sliderRow.appendChild(likeIntervalValueEl);
+        secondaryGroup.appendChild(sliderRow);
 
         loadAllBtn = document.createElement('button');
         loadAllBtn.className = 'batch-like-secondary';
@@ -359,6 +403,7 @@
 
     function likeListItems(list, { silent = false, onProgress = null, expectLiked = null } = {}) {
         const total = list.length
+        const step = getLikeIntervalMs()
 
         return new Promise((resolve) => {
             if (total === 0) {
@@ -386,7 +431,7 @@
                     item.click()
                     done++
                     if (onProgress) onProgress(index, total)
-                }, LIKE_INTERVAL * index)
+                }, step * index)
             }
             setTimeout(() => {
                 clearHighlights()
@@ -394,7 +439,7 @@
                     alert(`批量操作完成，本次实际操作了${done}条主评论。`)
                 }
                 resolve(done)
-            }, LIKE_INTERVAL * total + LIKE_INTERVAL)
+            }, step * total + step)
         })
     }
 
