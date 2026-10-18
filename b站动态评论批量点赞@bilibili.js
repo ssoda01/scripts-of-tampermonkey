@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站动态评论批量点赞
 // @namespace    https://github.com/ssoda01
-// @version      2.0
+// @version      2.0.1
 // @description  Bilibili dynamic comments batch likes(2.0 full automatic)
 // @author       sodakoo
 // @match        https://www.bilibili.com/opus/*
@@ -139,11 +139,13 @@
         });
 
         button2.addEventListener('click', function () {
-            likeListItems(getBatchList('get_all_unliked'))
+            // 只点当前未赞的，避免误取消
+            likeListItems(getBatchList('get_all_unliked'), { expectLiked: false })
         });
 
         button3.addEventListener('click', function () {
-            likeListItems(getBatchList('get_all_liked'))
+            // 只点当前已赞的，避免把未赞点成已赞
+            likeListItems(getBatchList('get_all_liked'), { expectLiked: true })
         });
     }
 
@@ -178,14 +180,22 @@
         return results
     }
 
-    // 已赞：fill 图标 + brand_blue；未赞：line 图标
+    // 已赞：fill 或 brand_blue；未赞：line 且无品牌色
     function isLikedIcon(icon) {
         if (!icon) return false
         const iconName = icon.getAttribute('icon') || ''
-        if (iconName.includes('hand_thumbsup_fill')) return true
-        if (iconName.includes('hand_thumbsup_line')) return false
         const style = icon.getAttribute('style') || ''
-        return style.includes('brand_blue') || style.includes('--brand_blue')
+        if (iconName.includes('hand_thumbsup_fill')) return true
+        if (style.includes('brand_blue')) return true
+        if (iconName.includes('hand_thumbsup_line')) return false
+        return false
+    }
+
+    function readLikeBtnState(likeBtn) {
+        if (!likeBtn || !likeBtn.isConnected) return null
+        const icon = likeBtn.querySelector('bili-icon')
+        if (!icon) return null
+        return isLikedIcon(icon)
     }
 
     function getCommentHost(el) {
@@ -342,7 +352,7 @@
         return counter
     }
 
-    function likeListItems(list, { silent = false, onProgress = null } = {}) {
+    function likeListItems(list, { silent = false, onProgress = null, expectLiked = null } = {}) {
         const TIME_STEP = 1000
         const total = list.length
 
@@ -353,6 +363,7 @@
                 return
             }
 
+            let done = 0
             let counter = 0
             for (const item of list) {
                 counter++
@@ -362,16 +373,23 @@
                     if (silent && !isAutoRunning) return
                     const host = getCommentHost(item)
                     if (host) host.scrollIntoView({ block: 'center', inline: 'nearest' })
+
+                    // 点击前复核状态：列表收集后可能已变化 / 滚动复用 DOM
+                    const likedNow = readLikeBtnState(item)
+                    if (likedNow === null) return
+                    if (expectLiked !== null && likedNow !== expectLiked) return
+
                     item.click()
+                    done++
                     if (onProgress) onProgress(index, total)
                 }, TIME_STEP * index)
             }
             setTimeout(() => {
                 clearHighlights()
                 if (!silent) {
-                    alert(`批量操作完成，本次赞/取消了${total}条主评论。`)
+                    alert(`批量操作完成，本次实际操作了${done}条主评论。`)
                 }
-                resolve(total)
+                resolve(done)
             }, TIME_STEP * total + TIME_STEP)
         })
     }
@@ -399,6 +417,7 @@
             setStatus(`全自动·点赞 0/${previewCount}`)
             await likeListItems(list, {
                 silent: true,
+                expectLiked: false,
                 onProgress: (i, total) => {
                     if (isAutoRunning) setStatus(`全自动·点赞 ${i}/${total}`)
                 }
