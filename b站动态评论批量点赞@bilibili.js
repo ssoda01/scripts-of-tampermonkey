@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站动态评论批量点赞
 // @namespace    https://github.com/ssoda01
-// @version      2.0.1
+// @version      2.1.0
 // @description  Bilibili dynamic comments batch likes(2.0 full automatic)
 // @author       sodakoo
 // @match        https://www.bilibili.com/opus/*
@@ -13,6 +13,12 @@
 
 (function () {
     'use strict';
+
+    // —— 频率配置（毫秒）——
+    // LIKE_INTERVAL：每条点赞/取消赞的间隔，越大越慢、越不容易触发风控
+    // LOAD_INTERVAL：加载全部评论时，每次滚到底的等待
+    const LIKE_INTERVAL = 3000
+    const LOAD_INTERVAL = 800
 
     let loadAllBtn = null;
     let autoBtn = null;
@@ -250,14 +256,13 @@
 
         let stableRounds = 0
         const STABLE_NEED = 4
-        const INTERVAL = 800
         let lastHeight = 0
         let lastCount = 0
 
         while (isLoadingAll) {
             window.scrollTo(0, getScrollHeight())
 
-            await new Promise((r) => setTimeout(r, INTERVAL))
+            await new Promise((r) => setTimeout(r, LOAD_INTERVAL))
             if (!isLoadingAll) break
 
             const height = getScrollHeight()
@@ -353,7 +358,6 @@
     }
 
     function likeListItems(list, { silent = false, onProgress = null, expectLiked = null } = {}) {
-        const TIME_STEP = 1000
         const total = list.length
 
         return new Promise((resolve) => {
@@ -382,7 +386,7 @@
                     item.click()
                     done++
                     if (onProgress) onProgress(index, total)
-                }, TIME_STEP * index)
+                }, LIKE_INTERVAL * index)
             }
             setTimeout(() => {
                 clearHighlights()
@@ -390,7 +394,7 @@
                     alert(`批量操作完成，本次实际操作了${done}条主评论。`)
                 }
                 resolve(done)
-            }, TIME_STEP * total + TIME_STEP)
+            }, LIKE_INTERVAL * total + LIKE_INTERVAL)
         })
     }
 
