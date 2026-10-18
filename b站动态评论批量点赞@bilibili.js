@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         B站动态评论批量点赞(2.0全自动大更新)
+// @name         B站动态评论批量点赞
 // @namespace    https://github.com/ssoda01
 // @version      2.0
 // @description  Bilibili dynamic comments batch likes(2.0 full automatic)
