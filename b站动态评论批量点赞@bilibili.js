@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站动态评论批量点赞
 // @namespace    https://github.com/ssoda01
-// @version      2.1.1
+// @version      2.2.0
 // @description  Bilibili dynamic comments batch likes(2.0 full automatic)
 // @author       sodakoo
 // @match        https://www.bilibili.com/opus/*
@@ -15,18 +15,41 @@
     'use strict';
 
     // LOAD_INTERVAL：加载全部评论时，每次滚到底的等待（毫秒）
-    // 点赞间隔由面板滑块控制（秒），默认 3s
+    // 点赞间隔由面板滑块控制（秒）
     const LOAD_INTERVAL = 800
-    let likeIntervalSec = 3
+    let likeIntervalSec = 20
 
     let loadAllBtn = null;
     let autoBtn = null;
     let likeIntervalValueEl = null;
+    let etaEl = null;
     let isLoadingAll = false;
     let isAutoRunning = false;
 
     function getLikeIntervalMs() {
         return likeIntervalSec * 1000
+    }
+
+    function formatDuration(totalSec) {
+        if (totalSec <= 0) return '0秒'
+        const h = Math.floor(totalSec / 3600)
+        const m = Math.floor((totalSec % 3600) / 60)
+        const s = totalSec % 60
+        const parts = []
+        if (h > 0) parts.push(`${h}小时`)
+        if (m > 0) parts.push(`${m}分`)
+        if (s > 0 || parts.length === 0) parts.push(`${s}秒`)
+        return parts.join('')
+    }
+
+    function updateEta(count) {
+        if (!etaEl) return
+        const n = typeof count === 'number' ? count : getBatchList('get_all_unliked').length
+        // 最后一次点击在 n * interval，收尾再等 1 个 interval
+        const totalSec = n <= 0 ? 0 : (n + 1) * likeIntervalSec
+        etaEl.textContent = n <= 0
+            ? `预计 — · 0条`
+            : `预计 ${formatDuration(totalSec)} · ${n}条`
     }
 
     if (window.location.href.match(/^https:\/\/t\.bilibili\.com\/\d+\??.*$/) || window.location.href.match(/^https:\/\/www\.bilibili\.com\/opus\/\d+\??.*$/)) {
@@ -110,6 +133,13 @@
         color: #6b7078;
         font-variant-numeric: tabular-nums;
     }
+    .batch-like-eta {
+        padding: 0 2px 2px;
+        font-size: 11px;
+        line-height: 1.4;
+        color: #8a9099;
+        font-variant-numeric: tabular-nums;
+    }
 `
         var style = document.createElement('style');
         style.innerHTML = styleBatchLikes;
@@ -130,20 +160,26 @@
         sliderRow.className = 'batch-like-slider';
         const slider = document.createElement('input');
         slider.type = 'range';
-        slider.min = '3';
-        slider.max = '20';
-        slider.step = '1';
+        slider.min = '20';
+        slider.max = '60';
+        slider.step = '20';
         slider.value = String(likeIntervalSec);
         likeIntervalValueEl = document.createElement('span');
         likeIntervalValueEl.className = 'batch-like-slider-value';
         likeIntervalValueEl.textContent = `${likeIntervalSec}s`;
         slider.addEventListener('input', function () {
-            likeIntervalSec = Number(slider.value) || 3;
+            likeIntervalSec = Number(slider.value) || 20;
             likeIntervalValueEl.textContent = `${likeIntervalSec}s`;
+            updateEta();
         });
         sliderRow.appendChild(slider);
         sliderRow.appendChild(likeIntervalValueEl);
         secondaryGroup.appendChild(sliderRow);
+
+        etaEl = document.createElement('div');
+        etaEl.className = 'batch-like-eta';
+        etaEl.textContent = '预计 — · 0条';
+        secondaryGroup.appendChild(etaEl);
 
         loadAllBtn = document.createElement('button');
         loadAllBtn.className = 'batch-like-secondary';
@@ -185,18 +221,28 @@
         });
 
         button.addEventListener('click', function () {
-            highlightListItems(getBatchList('get_all_unliked'))
+            const list = getBatchList('get_all_unliked')
+            highlightListItems(list)
+            updateEta(list.length)
         });
 
         button2.addEventListener('click', function () {
+            const list = getBatchList('get_all_unliked')
+            updateEta(list.length)
             // 只点当前未赞的，避免误取消
-            likeListItems(getBatchList('get_all_unliked'), { expectLiked: false })
+            likeListItems(list, { expectLiked: false })
         });
 
         button3.addEventListener('click', function () {
+            const list = getBatchList('get_all_liked')
+            updateEta(list.length)
             // 只点当前已赞的，避免把未赞点成已赞
-            likeListItems(getBatchList('get_all_liked'), { expectLiked: true })
+            likeListItems(list, { expectLiked: true })
         });
+
+        // 评论异步渲染，稍后再估一次
+        setTimeout(updateEta, 1500)
+        setTimeout(updateEta, 4000)
     }
 
     function stopAllTasks() {
@@ -328,6 +374,7 @@
         const stopped = !isLoadingAll
         isLoadingAll = false
         if (!isAutoRunning && loadAllBtn) loadAllBtn.textContent = "加载全部评论"
+        updateEta()
         if (!silent && !stopped) {
             alert(`加载完成，当前主评论约 ${finalCount} 条。`)
         }
@@ -455,6 +502,7 @@
             setStatus("全自动·预览中…")
             const list = getBatchList('get_all_unliked')
             const previewCount = highlightListItems(list, { silent: true })
+            updateEta(previewCount)
             await new Promise((r) => setTimeout(r, 600))
             if (!isAutoRunning) return
 
@@ -463,12 +511,15 @@
                 return
             }
 
-            setStatus(`全自动·点赞 0/${previewCount}`)
+            const etaText = formatDuration((previewCount + 1) * likeIntervalSec)
+            setStatus(`全自动·点赞 0/${previewCount} · ${etaText}`)
             await likeListItems(list, {
                 silent: true,
                 expectLiked: false,
                 onProgress: (i, total) => {
-                    if (isAutoRunning) setStatus(`全自动·点赞 ${i}/${total}`)
+                    if (!isAutoRunning) return
+                    const remainSec = (total - i + 1) * likeIntervalSec
+                    setStatus(`全自动·点赞 ${i}/${total} · 剩${formatDuration(remainSec)}`)
                 }
             })
 
